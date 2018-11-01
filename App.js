@@ -7,7 +7,7 @@
  */
 
 import React, { Component } from 'react';
-import { Alert, Image, ScrollView, Text } from 'react-native';
+import { Alert, Image, Platform, ScrollView, Text } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import isNil from 'lodash/isNil';
 import isEmpty from 'lodash/isEmpty';
@@ -26,7 +26,7 @@ import ViewRow from './src/base_components/ViewRow';
 
 
 const GEOLOCATION_OPTIONS = {
-  enableHighAccuracy: true,
+  enableHighAccuracy: !(Platform.OS === 'android'),
   timeout: 20000,
   maximumAge: 1000,
   fastestInterval: 1000,
