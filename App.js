@@ -7,7 +7,7 @@
  */
 
 import React, { Component } from 'react';
-import { Alert, Image, ScrollView } from 'react-native';
+import { Alert, Image, ScrollView, Text } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import isNil from 'lodash/isNil';
 import isEmpty from 'lodash/isEmpty';
@@ -55,6 +55,13 @@ const TempText = styled.Text`
 const NormalText = TempText.extend`
   font-size: 20px;
   margin-bottom: 0px;
+`;
+
+const EmptyWrapper = styled(ViewCol)`
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
 `;
 
 export default class App extends Component<Props> {
@@ -135,8 +142,28 @@ export default class App extends Component<Props> {
 
 
   render() {
-    const { weatherData } = this.state;
-    console.log(this.state);
+    const { weatherData, locationPermission, errors } = this.state;
+    if (!locationPermission) {
+      return (
+        <EmptyWrapper>
+          <Text>Allow location permission to show weather information.</Text>
+        </EmptyWrapper>
+      );
+    }
+    if (!isNil(errors)) {
+      return (
+        <EmptyWrapper>
+          <Text>Something went wrong while fetching weather data.</Text>
+        </EmptyWrapper>
+      );
+    }
+    if (isNil(weatherData)) {
+      return (
+        <EmptyWrapper>
+          <Text>Loading data...</Text>
+        </EmptyWrapper>
+      );
+    }
     return (
       <ScrollView>
         {weatherData &&
@@ -161,10 +188,14 @@ export default class App extends Component<Props> {
               />
             </ViewRow>
           </TempWrapper>
+
+        </UpperSection>
+        }
+        {
+          weatherData &&
           <ViewCol>
             <CurrentWeather weatherData={weatherData.currently} />
           </ViewCol>
-        </UpperSection>
         }
         {
           weatherData && <IconWeatherList weatherData={weatherData.hourly} />

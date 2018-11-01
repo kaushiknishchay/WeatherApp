@@ -5,13 +5,13 @@ import ViewRow from '../base_components/ViewRow';
 
 
 const SummaryText = styled.Text`
-  color: #fdfdfd;
+  color: #0c0c0c;
   margin: 5px 0px;
   font-size: 16px;
 `;
 
 const InfoText = styled.Text`
-  color: #fdfdfd;
+  color: #424242;
   margin: 4px 0;
   font-size: 13px;
 `;
@@ -20,7 +20,7 @@ const CurrentWeather = ({ weatherData }) => (
   <ViewRow
     style={{
       justifyContent: 'flex-start',
-      backgroundColor: 'rgba(0,0,0,0.7)',
+      // backgroundColor: 'rgba(0,0,0,0.7)',
       padding: 10,
       alignItems: 'center',
     }}
