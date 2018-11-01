@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
 import CityImageBg from './CityImageBg';
-import ViewCol from '../base_components/ViewCol';
 
 
 const UpperWrapper = styled.View`
@@ -19,9 +18,7 @@ const UpperWrapper = styled.View`
 const UpperSection = ({ children = null }) => (
   <UpperWrapper>
     <CityImageBg />
-    <ViewCol>
-      {children}
-    </ViewCol>
+    {children}
   </UpperWrapper>
 );
 

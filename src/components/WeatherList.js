@@ -1,6 +1,6 @@
 /* eslint-disable react/forbid-prop-types */
 import React, { Component } from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, Text } from 'react-native';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
@@ -65,6 +65,15 @@ class WeatherList extends Component {
     const iconSize = 60;
     return (
       <FlatList
+        ListHeaderComponent={(
+          <ViewCol
+            style={{
+              padding: 15,
+              backgroundColor: '#e6e6e6',
+            }}
+          >
+            <Text style={{ fontSize: 16, color: '#333', fontWeight: 'bold' }}>Later This week</Text>
+          </ViewCol>)}
         data={dataToShow}
         keyExtractor={(item, index) => item.time + item.icon}
         renderItem={({ item }) => (

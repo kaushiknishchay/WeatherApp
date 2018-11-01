@@ -7,16 +7,22 @@
  */
 
 import React, { Component } from 'react';
-import { Alert, ScrollView } from 'react-native';
+import { Alert, Image, ScrollView } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import isNil from 'lodash/isNil';
 import isEmpty from 'lodash/isEmpty';
 import Permissions from 'react-native-permissions';
 import axios from 'axios';
+import styled from 'styled-components';
+
+
 import UpperSection from './src/components/UpperSection';
 import IconWeatherList from './src/components/IconWeatherList';
 import WeatherList from './src/components/WeatherList';
 import CurrentWeather from './src/components/CurrentWeather';
+import ViewCol from './src/base_components/ViewCol';
+import Assets from './src/assets';
+import ViewRow from './src/base_components/ViewRow';
 
 
 const GEOLOCATION_OPTIONS = {
@@ -30,6 +36,27 @@ const GEOLOCATION_OPTIONS = {
 };
 
 type Props = {};
+
+const TempWrapper = styled.View`
+  background: rgba(33,33,33,0.67);
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+  padding: 50px 0 10px 30px;
+`;
+
+const TempText = styled.Text`
+  color: #fdfdfd;
+  margin: 5px 0px;
+  font-size: 40px;
+`;
+
+const NormalText = TempText.extend`
+  font-size: 20px;
+  margin-bottom: 0px;
+`;
+
 export default class App extends Component<Props> {
   constructor(props) {
     super(props);
@@ -114,7 +141,29 @@ export default class App extends Component<Props> {
       <ScrollView>
         {weatherData &&
         <UpperSection>
-          <CurrentWeather weatherData={weatherData.currently} />
+          <TempWrapper>
+            <ViewRow style={{ justifyContent: 'space-between' }}>
+              <ViewCol>
+                <NormalText>Temperature</NormalText>
+                <TempText>
+                  {weatherData.currently.temperature.toFixed(0)}
+                  ˚C
+                </TempText>
+              </ViewCol>
+              <Image
+                source={Assets[weatherData.currently.icon]}
+                style={{
+                  width: 80,
+                  height: 80,
+                  marginVertical: 10,
+                  marginHorizontal: 10,
+                }}
+              />
+            </ViewRow>
+          </TempWrapper>
+          <ViewCol>
+            <CurrentWeather weatherData={weatherData.currently} />
+          </ViewCol>
         </UpperSection>
         }
         {

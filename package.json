@@ -5,6 +5,7 @@
   "scripts": {
     "start": "DARKSKY_KEY=87eff16be0971f64bd00fdec4bec7e29 node node_modules/react-native/local-cli/cli.js start",
     "android": "node node_modules/react-native/local-cli/cli.js run-android",
+    "build:android": "react-native run-android --variant=release",
     "ios": "node node_modules/react-native/local-cli/cli.js run-ios",
     "test": "jest"
   },

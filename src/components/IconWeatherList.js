@@ -1,6 +1,6 @@
 /* eslint-disable react/forbid-prop-types */
 import React, { Component } from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, Text } from 'react-native';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
@@ -41,27 +41,37 @@ class IconWeatherList extends Component {
 
     const iconSize = 40;
     return (
-      <FlatList
-        horizontal
-        style={{
-          backgroundColor: '#f5f5f5',
-        }}
-        data={dataToShow}
-        keyExtractor={(item, index) => item.time + item.icon}
-        renderItem={({ item }) => (
-          <IconItem>
-            <WeatherIcon
-              source={Assets[item.icon]}
-              size={iconSize}
-            />
-            <DateBadge>
-              <DateText>
-                {moment(item.time * 1000).format('LT')}
-              </DateText>
-            </DateBadge>
-          </IconItem>
-        )}
-      />
+      <React.Fragment>
+        <ViewCol
+          style={{
+            padding: 15,
+            backgroundColor: '#e6e6e6',
+          }}
+        >
+          <Text style={{ fontSize: 16, color: '#333', fontWeight: 'bold' }}>Later Today</Text>
+        </ViewCol>
+        <FlatList
+          horizontal
+          style={{
+            backgroundColor: '#f5f5f5',
+          }}
+          data={dataToShow}
+          keyExtractor={(item, index) => item.time + item.icon}
+          renderItem={({ item }) => (
+            <IconItem>
+              <WeatherIcon
+                source={Assets[item.icon]}
+                size={iconSize}
+              />
+              <DateBadge>
+                <DateText>
+                  {moment(item.time * 1000).format('LT')}
+                </DateText>
+              </DateBadge>
+            </IconItem>
+          )}
+        />
+      </React.Fragment>
     );
   }
 }
