@@ -1,5 +1,6 @@
 # OSX
 #
+Pods/
 .DS_Store
 .idea/
 .vscode/

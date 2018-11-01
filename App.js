@@ -6,44 +6,124 @@
  * @flow
  */
 
-import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import React, { Component } from 'react';
+import { Alert, ScrollView } from 'react-native';
+import Geolocation from 'react-native-geolocation-service';
+import isNil from 'lodash/isNil';
+import isEmpty from 'lodash/isEmpty';
+import Permissions from 'react-native-permissions';
+import axios from 'axios';
+import UpperSection from './src/components/UpperSection';
+import IconWeatherList from './src/components/IconWeatherList';
+import WeatherList from './src/components/WeatherList';
+import CurrentWeather from './src/components/CurrentWeather';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+
+const GEOLOCATION_OPTIONS = {
+  enableHighAccuracy: true,
+  timeout: 20000,
+  maximumAge: 1000,
+  fastestInterval: 1000,
+  distanceFilter: 10.00,
+  showLocationDialog: true,
+  useSignificantChanges: false,
+};
 
 type Props = {};
 export default class App extends Component<Props> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      errors: null,
+      locationPermission: false,
+      currentPosition: null,
+      weatherData: null,
+    };
+  }
+
+  componentDidMount() {
+    Permissions.check('location').then((locationCheck) => {
+      if (locationCheck === 'authorized') {
+        this.getCurrentLocation();
+        this.setState({
+          locationPermission: true,
+        });
+      } else {
+        this._requestPermission();
+      }
+    });
+  }
+
+  getCurrentLocation = () => {
+    Geolocation.getCurrentPosition((position) => {
+      if (!isNil(position) && !isEmpty(position)) {
+        this.setState({
+          currentPosition: position.coords,
+        }, () => this.getWeather());
+      }
+    }, (error) => {
+    }, GEOLOCATION_OPTIONS);
+  };
+
+  getBaseURL = (lat, lng) => `https://api.darksky.net/forecast/87eff16be0971f64bd00fdec4bec7e29/${lat},${lng}?units=si`;
+
+  getWeather = () => {
+    const { currentPosition } = this.state;
+    const { latitude, longitude } = currentPosition;
+
+    axios
+      .get(this.getBaseURL(latitude, longitude))
+      .then((res) => {
+        this.setState({
+          weatherData: res.data,
+          errors: null,
+        });
+      })
+      .catch((err) => {
+        this.setState({
+          errors: err,
+          weatherData: null,
+        });
+      });
+  };
+
+
+  _requestPermission = () => {
+    Permissions.request('location', { type: 'always' }).then((locationRequest) => {
+      if (locationRequest === 'authorized') {
+        this.setState({ locationPermission: true });
+        this.getCurrentLocation();
+      } else {
+        Alert.alert(
+          'Can we access your location?',
+          'We need access so we can set your location',
+          [
+            { text: 'OK', onPress: this._requestPermission },
+            { text: 'Open Settings', onPress: Permissions.openSettings },
+          ],
+        );
+      }
+    });
+  };
+
+
   render() {
+    const { weatherData } = this.state;
+    console.log(this.state);
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to React Native!</Text>
-        <Text style={styles.instructions}>To get started, edit App.js</Text>
-        <Text style={styles.instructions}>{instructions}</Text>
-      </View>
+      <ScrollView>
+        {weatherData &&
+        <UpperSection>
+          <CurrentWeather weatherData={weatherData.currently} />
+        </UpperSection>
+        }
+        {
+          weatherData && <IconWeatherList weatherData={weatherData.hourly} />
+        }
+        {
+          weatherData && <WeatherList weatherData={weatherData.daily} />
+        }
+      </ScrollView>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
